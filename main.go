@@ -12,12 +12,16 @@ import (
 )
 
 const (
-	flagDir = "dir"
+	SCRIPTD   = "script.d"
+	flagDir   = "dir"
+	flagDebug = "debug"
 )
 
 var errDirNotFound = errors.New("could not find script dir")
 var errNoArgs = errors.New("script name not provided")
 var errCallScript = errors.New("script execution failed")
+var errNoScript = errors.New("script does not exist")
+var errNoTasks = errors.New("no tasks found, nothing to do")
 
 func main() {
 	log.SetFormatter(&log.TextFormatter{})
@@ -28,8 +32,15 @@ func main() {
 		{
 			Name:    "run",
 			Aliases: []string{"r"},
-			Usage:   "looks for a script.d directory and runs the specified command provided by args.",
+			Usage:   "runs the specified command, you may specify multiple commands.",
 			Action:  runCommand,
+		},
+		{
+			Name:    "mux",
+			Aliases: []string{"m"},
+			Usage:   "multiplex commands in subdirectories",
+			// todo: add flags for --ignore-not-existing tasks
+			Action: muxCommand,
 		},
 		{
 			Name:    "init",
@@ -38,6 +49,13 @@ func main() {
 			Action:  initCommand,
 		},
 	}
+	app.Before = func(c *cli.Context) error {
+		if c.Bool(flagDebug) {
+			log.SetLevel(log.DebugLevel)
+		}
+		return nil
+	}
+
 	app.Run(os.Args)
 }
 
@@ -48,18 +66,26 @@ func globalFlags() []cli.Flag {
 			Value: "",
 			Usage: "set the working directory",
 		},
+		cli.BoolFlag{
+			Name:  flagDebug,
+			Usage: "enable debug",
+		},
 	}
 }
 
 func getCwd(c *cli.Context) (string, error) {
-	cwd := c.String(flagDir)
-	if cwd == "" {
-		dir, err := os.Executable()
-		if err != nil {
-			return "", err
-		}
-		cwd = path.Dir(dir)
+	var execDir string
+	cwd := c.GlobalString(flagDir)
+	dir, err := os.Executable()
+	if err != nil {
+		return "", err
 	}
+	execDir = path.Dir(dir)
+	if !path.IsAbs(cwd) {
+		cwd = path.Join(execDir, cwd)
+	}
+
+	log.Debugf("cwd: %s", cwd)
 	return cwd, nil
 }
 
