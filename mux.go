@@ -39,7 +39,7 @@ func muxCommand(c *cli.Context) error {
 			}
 			// let's add ./<subproject>/script.d/<task>
 			for _, task := range argv {
-				if taskExists(subProjectScriptd, task) {
+				if fileExists(subProjectScriptd, task) {
 					projectTaskList := execList[task]
 					if projectTaskList == nil {
 						projectTaskList = []string{}
@@ -67,7 +67,7 @@ func muxCommand(c *cli.Context) error {
 	return nil
 }
 
-func taskExists(scriptdPath, task string) bool {
+func fileExists(scriptdPath, task string) bool {
 	_, err := os.Stat(path.Join(scriptdPath, task))
 	if err != nil {
 		return false
