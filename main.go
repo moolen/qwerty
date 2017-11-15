@@ -26,6 +26,7 @@ var errNoTasks = errors.New("no tasks found, nothing to do")
 func main() {
 	log.SetFormatter(&log.TextFormatter{})
 	app := cli.NewApp()
+	app.Version = "0.1.0"
 	app.Name = "qwerty"
 	app.Flags = globalFlags()
 	app.Commands = []cli.Command{
@@ -39,14 +40,7 @@ func main() {
 			Name:    "mux",
 			Aliases: []string{"m"},
 			Usage:   "multiplex commands in subdirectories",
-			// todo: add flags for --ignore-not-existing tasks
-			Action: muxCommand,
-		},
-		{
-			Name:    "init",
-			Aliases: []string{"i"},
-			Usage:   "scaffolds a script.d directory",
-			Action:  initCommand,
+			Action:  muxCommand,
 		},
 	}
 	app.Before = func(c *cli.Context) error {
