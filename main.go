@@ -28,13 +28,13 @@ func main() {
 		{
 			Name:    "run",
 			Aliases: []string{"r"},
-			Usage:   "run a script",
+			Usage:   "looks for a script.d directory and runs the specified command provided by args.",
 			Action:  runCommand,
 		},
 		{
 			Name:    "init",
 			Aliases: []string{"i"},
-			Usage:   "scaffold a script.d directory",
+			Usage:   "scaffolds a script.d directory",
 			Action:  initCommand,
 		},
 	}
