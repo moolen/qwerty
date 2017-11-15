@@ -3,13 +3,19 @@
 #### Usage
 
 Create a script.d directory in your repository. E.g. like this: 
-
 ```
-script.d
-├── install
-│   ├── 00-deps
-│   └── 01-buildtools
-└── release
+.
+├── build.bash
+├── glide.yaml
+├── main.go
+├── README.md
+├── script.d
+│   ├── build
+│   │   └── 00-build
+│   ├── install
+│   │   ├── 00-buildtools
+│   │   └── 01-deps
+│   └── releas
 ```
 
 You might have noticed, that `install` is a directory and `release`  is a file. If you run `qwerty run install` then all scripts inside the that folder are executed in-order. The actual exec command is `bash <file>` while bash has to be in yourt $PATH. all other env vars should be available.
