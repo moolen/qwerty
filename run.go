@@ -62,6 +62,8 @@ func callScript(scriptDir, task string) (stdout string, stderr string, err error
 	}
 	log.Debugf("executing file %s", script)
 	stdout, stderr, err = execDir(execRoot, "bash", script)
+	log.Debugf("stdout: %s", stdout)
+	log.Debugf("stderr: %s", stderr)
 	if err != nil {
 		return stdout, stderr, err
 	}
